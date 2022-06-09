@@ -1,7 +1,7 @@
 {
   "name": "compiladores",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "Lexico.js",
   "license": "ISC",
   "author": "",
   "type": "module",
