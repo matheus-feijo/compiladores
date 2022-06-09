@@ -1,0 +1,11 @@
+{
+  "name": "compiladores",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "dependencies": {
+    "line-reader": "^0.4.0"
+  }
+}
