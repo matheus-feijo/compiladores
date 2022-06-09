@@ -1,0 +1,1 @@
+![Automato]('./assets/automato.png')
