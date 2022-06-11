@@ -1,1 +1,1 @@
-!["automato"](./assets/automato-v.004.png)
+!["automato"](./assets/automato-v.005.png)

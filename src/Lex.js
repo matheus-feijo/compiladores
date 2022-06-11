@@ -28,7 +28,7 @@ eachLine('./texto.txt',(line,last)=>{
 
             if(numbers.includes(character)){
                 stage = 2;
-
+                
             }else if(character === '-'){
                 stage = 1;
 
