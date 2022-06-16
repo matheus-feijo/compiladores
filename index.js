@@ -3,4 +3,4 @@ import { Lexico } from "./src/Lexico.js";
 
 
 
-Lexico.getDados('./texto.txt');
+Lexico.getTokens('./exemplo1.txt');
