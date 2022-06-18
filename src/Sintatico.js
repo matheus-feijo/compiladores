@@ -1,0 +1,10 @@
+
+
+class Sintatico {
+
+    static getGramar() {
+
+
+    }
+
+}
