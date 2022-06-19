@@ -1,6 +1,6 @@
-import { Lexico } from "./src/Lexico.js";
+import { Analisador } from "./src/Analisador.js";
 
 
 
 
-Lexico.getTokens('./exemplo1.txt');
+Analisador.lexico('./exemplo1.txt');

@@ -5,7 +5,7 @@ const operators = ['+', '-', '*', '/', '^'];
 const acceptedStages = [5, 20, 14, 17];
 
 export class Lexico {
-    static getTokens(url) {
+    static lexico(url) {
         eachLine(url, (line, last) => {
             const tokens = [];
             var num = 0;
@@ -366,12 +366,97 @@ export class Lexico {
             }
 
             if (acceptedStages.includes(stage)) {
-                console.log(tokens.length);
+                this.sintatico(tokens);
             }
 
             //console.log(tokens);
             //console.log(line)
             //console.log(stage);
         });
+
+    }
+
+    static sintatico(tokens) {
+
+        var gramar = ['E'];
+        var casamento = [];
+
+        while (gramar.length !== 0) {
+
+            if (gramar[0] === 'E') {
+                gramar.shift();
+                gramar.unshift('E1');
+                gramar.unshift('T');
+
+            } else if (gramar[0] === 'T') {
+                gramar.shift();
+                gramar.unshift('T1');
+                gramar.unshift('P');
+
+            } else if (gramar[0] === 'P') {
+
+                gramar.shift();
+
+                if (tokens[0] === 'exp' && tokens[1] === '[') {
+                    gramar.unshift(tokens[1]);
+                    gramar.unshift(tokens[0]);
+
+                    tokens.shift(); //remove exp 
+                    tokens.shift(); //remove ' [ '
+
+                    gramar.unshift('P1');
+                } else {
+                    gramar.unshift('P1');
+                    gramar.unshift('F');
+                }
+
+            } else if (gramar[0] === 'F') {
+                gramar.shift();
+                if (typeof tokens[0] === "number") {
+                    casamento.push(tokens[0]);
+                    tokens.shift() //remove numero da primeira posicao da fila
+
+                } else if (tokens[0] === '(') {
+                    gramar.unshift(')');
+                    gramar.unshift('E');
+                    casamento.push(tokens[0]);
+                    tokens.shift();
+                }
+
+            } else if (gramar[0] === 'E1') {
+                gramar.shift();
+
+                if (tokens[0] === '+' || tokens[0] === '-') {
+
+                    gramar.unshift('E1');
+                    gramar.unshift('T');
+                    casamento.push(tokens[0]);
+                    tokens.shift() //remove operador '+' ou '-'
+
+                }
+
+            } else if (gramar[0] === 'T1') {
+                gramar.shift();
+
+                if (tokens[0] === '*' || tokens[0] === '/') {
+                    gramar.unshift('T1');
+                    gramar.unshift('P');
+                    casamento.push(tokens[0]);
+                    tokens.shift() //remove operador '*' ou '/'
+
+                }
+
+            } else if (gramar[0] === 'P1') {
+                gramar.shift();
+                if (tokens[0] === '^') {
+                    gramar.unshift('P1');
+                    gramar.unshift('F');
+                    casamento.push(tokens[0]);
+                    tokens.shift() //remove '^'
+
+                }
+            }
+        }
+        console.log(casamento);
     }
 }
