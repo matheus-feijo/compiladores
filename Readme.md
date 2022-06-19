@@ -2,19 +2,42 @@
 # automatos
 ###### exemplo de automatos seguido para a construção do analisador léxico, vale resaltar que algumas conexões foram mudadas
 
-* automato com parenteses:
+* ### automato com parenteses:
 !["automato"](./assets/parenteses.png)
 
-* automato com as outras expressoes fora do parenteses:
+* ### automato com as outras expressoes fora do parenteses:
 !["automato"](./assets/sem%20parenteses.png)
 
 # Analisador sintatico
+
+### Removendo recursividade a esquerda da linguagem
+* E  -> TE'
+* E' -> +TE' | -TE' | e
+* T  -> PT'
+* T' -> *PT' | /PT' | e
+* P  -> EXP[F]P' | FP'
+* P' -> ^FP' | e
+* F  -> (E) | id
+
+
 ### First da linguagem
 
-* First E = First T = First P = First F = {exp ,( ,id }
+* FIRST E -> {exp, ( }
+* FIRST E' -> {+, -, e }
+* FIRST T -> {exp , ( }
+* FIRST T' -> {*, /, e}
+* FIRST P -> {exp, ( }
+* FIRST P' -> {^, e}
+*FIRST F -> { (, id}
 
 ### Follow da linguagem
-* FOLLOW E = { + , - };
-* FOLLOW T = { * , / } U FOLLOW E = {* ,/ ,+ ,- }
-* FOLLOW P = FOLLOW T U { ^ } = {* ,/ ,+ ,- ,^ } 
-* FOLLOW F = FOLLOW P U { ] } = {* ,/ ,+ ,- ,^ ,] }
+
+* FOLLOW E = { ), $ }
+* FOLLOW E' = { ) ,$ }
+* FOLLOW T = {+, - , ) , $ }
+* FOLLOW T' = {+, - , ), $ }
+* FOLLOW P = { *, / , +, - , ), $ }
+* FOLLOW P' = {*, /, +, -, ), $ }
+* FOLLOW F = { ], ^, *, /, +, -, ), $ }
+
+
