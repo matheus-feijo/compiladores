@@ -12,8 +12,9 @@ export class Analisador {
             var stage = 0;
             var divisor = 1;
             var expoente;
+            var flag = 0;
 
-            for (let i = 0; i < line.length; i++) {
+            for (let i = 0; i < line.length && flag === 0; i++) {
                 if (line[i] === " " || line[i] === "\t" || line[i] === "\n") {
                     continue;
                 }
@@ -30,7 +31,7 @@ export class Analisador {
                         stage = 6;
                         tokens.push(line[i]);
                     } else {
-                        stage === 100;
+                        flag = 1;
                     }
 
                 } else if (stage === 1) {
@@ -38,7 +39,7 @@ export class Analisador {
                         expoente = expoente + 'x';
                         stage = 2;
                     } else {
-                        stage = 100;
+                        flag = 1;
                     }
 
                 } else if (stage === 2) {
@@ -48,7 +49,7 @@ export class Analisador {
                         expoente = '';
                         stage = 0;
                     } else {
-                        stage = 100;
+                        flag = 1;
                     }
 
                     //stage = numbers
@@ -78,7 +79,7 @@ export class Analisador {
                         divisor = divisor * 10;
                         num = parseInt(num) + parseFloat(line[i] / divisor);
                     } else {
-                        stage = 100;
+                        flag = 1;
                     }
 
                 } else if (stage === 5) {
@@ -106,7 +107,7 @@ export class Analisador {
                         stage = 3;
                         num = parseInt(line[i]);
 
-                        i === line.length - 1 && tokens.push(line[i]);
+                        i === line.length - 1 && tokens.push(parseInt(line[i]));
 
                     } else if (line[i] === 'e') {
                         stage = 1;
@@ -114,15 +115,15 @@ export class Analisador {
                     } else if (operators.includes(line[i])) {
                         stage = 6;
                         tokens.push(line[i]);
-
+                    } else {
+                        flag = 1;
                     }
-
                 }
             }
-            if (stage === 100) {
-                throw new Error('Sintaxe nao permitida')
+            if (flag === 1) {
+                throw new Error(`'${line}' possui sintaxe incorreta para a linguagem`)
             } else {
-                //console.log(tokens);
+                console.log(tokens);
                 this.sintatico(tokens);
             }
         });
@@ -131,62 +132,30 @@ export class Analisador {
 
     static sintatico(tokens) {
 
+        var copiaToken = tokens;
         var gramar = ['E'];
         var casamento = [];
+        var flag = 0
 
-        while (gramar.length !== 0) {
+        while (gramar.length !== 0 && flag === 0) {
 
             if (gramar[0] === 'E') {
                 gramar.shift();
                 gramar.unshift('E1');
                 gramar.unshift('T');
 
+            } else if (gramar[0] === 'E1') {
+                gramar.shift();
+                if (tokens[0] === '+' || tokens[0] === '-') {
+                    gramar.unshift('E1');
+                    gramar.unshift('T');
+                    gramar.unshift(tokens[0]);
+                }
+
             } else if (gramar[0] === 'T') {
                 gramar.shift();
                 gramar.unshift('T1');
                 gramar.unshift('P');
-
-            } else if (gramar[0] === 'P') {
-
-                gramar.shift();
-
-                if (tokens[0] === 'exp' && tokens[1] === '[') {
-                    gramar.unshift(tokens[1]);
-                    gramar.unshift(tokens[0]);
-
-                    tokens.shift(); //remove exp 
-                    tokens.shift(); //remove ' [ '
-
-                    gramar.unshift('P1');
-                } else {
-                    gramar.unshift('P1');
-                    gramar.unshift('F');
-                }
-
-            } else if (gramar[0] === 'F') {
-                gramar.shift();
-                if (typeof tokens[0] === "number") {
-                    casamento.push(tokens[0]);
-                    tokens.shift() //remove numero da primeira posicao da fila
-
-                } else if (tokens[0] === '(') {
-                    gramar.unshift(')');
-                    gramar.unshift('E');
-                    casamento.push(tokens[0]);
-                    tokens.shift();
-                }
-
-            } else if (gramar[0] === 'E1') {
-                gramar.shift();
-
-                if (tokens[0] === '+' || tokens[0] === '-') {
-
-                    gramar.unshift('E1');
-                    gramar.unshift('T');
-                    casamento.push(tokens[0]);
-                    tokens.shift() //remove operador '+' ou '-'
-
-                }
 
             } else if (gramar[0] === 'T1') {
                 gramar.shift();
@@ -194,9 +163,22 @@ export class Analisador {
                 if (tokens[0] === '*' || tokens[0] === '/') {
                     gramar.unshift('T1');
                     gramar.unshift('P');
-                    casamento.push(tokens[0]);
-                    tokens.shift() //remove operador '*' ou '/'
+                    gramar.unshift(tokens[0]);
+                }
 
+            } else if (gramar[0] === 'P') {
+                gramar.shift();
+
+                if (tokens[0] === 'exp' && tokens[1] === '[') {
+                    gramar.unshift('P1');
+                    gramar.unshift(']');
+                    gramar.unshift('F');
+                    gramar.unshift('[');
+                    gramar.unshift('exp');
+
+                } else {
+                    gramar.unshift('P1');
+                    gramar.unshift('F');
                 }
 
             } else if (gramar[0] === 'P1') {
@@ -204,14 +186,74 @@ export class Analisador {
                 if (tokens[0] === '^') {
                     gramar.unshift('P1');
                     gramar.unshift('F');
-                    casamento.push(tokens[0]);
-                    tokens.shift() //remove '^'
-
+                    gramar.unshift('^');
                 }
-            }
 
-            console.log(gramar)
+            } else if (gramar[0] === 'F') {
+
+                if (typeof tokens[0] === 'number') {
+                    gramar.shift();
+                    gramar.unshift(tokens[0]);
+
+                } else if (tokens[0] === '(') {
+                    gramar.shift();
+                    gramar.unshift(')');
+                    gramar.unshift('E');
+                    gramar.unshift('(');
+                } else {
+                    flag = 1;
+                }
+
+            } else if (typeof gramar[0] === 'number') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+
+            } else if (gramar[0] === '(') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+            } else if (gramar[0] === ')') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+            } else if (gramar[0] === '+' || gramar[0] === '-') {
+                casamento.push(tokens[0]); //valida token
+                gramar.shift();
+                tokens.shift() //remove operador '+' ou '-'
+
+            } else if (gramar[0] === '*' || gramar[0] === '/') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift(); //remove operador '*' ou '/'
+
+            } else if (gramar[0] === 'exp') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+            } else if (gramar[0] === '[') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+            } else if (gramar[0] === ']') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+            } else if (gramar[0] === '^') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+            }
         }
-        console.log(casamento);
+
+        if (flag === 1) {
+            throw new Error(`${copiaToken.join('')} não é aceito`);
+        }
     }
 }
