@@ -2,7 +2,6 @@ import { eachLine } from "line-reader";
 
 const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const operators = ['+', '-', '*', '/', '^', '(', ')', '[', ']'];
-const acceptedStages = [5, 20, 14, 17];
 
 export class Analisador {
     static lexico(url) {
@@ -70,6 +69,8 @@ export class Analisador {
                         expoente = 'e';
                         tokens.push(num);
                         num = 0;
+                    } else {
+                        flag = 1;
                     }
 
                     //stage = ' . '
@@ -93,6 +94,7 @@ export class Analisador {
                         num = 0;
                         divisor = 1;
                         tokens.push(line[i]);
+
                     } else if (line[i] === 'e') {
                         tokens.push(num);
                         num = 0;
@@ -124,69 +126,165 @@ export class Analisador {
                 throw new Error(`'${line}' possui sintaxe incorreta para a linguagem`)
             } else {
                 console.log(tokens);
-                this.sintatico(tokens);
+                this.sintatic(tokens);
             }
         });
 
     }
 
-    static sintatico(tokens) {
+    static sintatic(tokens) {
 
-        var copiaToken = tokens;
+        var copyTokens = tokens;
         var gramar = ['E'];
         var casamento = [];
-        var flag = 0
+        var flag = 0;
 
         while (gramar.length !== 0 && flag === 0) {
 
             if (gramar[0] === 'E') {
-                gramar.shift();
-                gramar.unshift('E1');
-                gramar.unshift('T');
+                if (tokens[0] === '(') {
+                    gramar.shift();
+                    gramar.unshift('E1');
+                    gramar.unshift('T');
+
+                } else if (tokens[0] === 'exp') {
+                    gramar.shift();
+                    gramar.unshift('E1');
+                    gramar.unshift('T');
+                } else if (typeof tokens[0] === 'number') {
+                    gramar.shift();
+                    gramar.unshift('E1');
+                    gramar.unshift('T');
+                } else {
+                    flag = 1;
+                }
 
             } else if (gramar[0] === 'E1') {
-                gramar.shift();
-                if (tokens[0] === '+' || tokens[0] === '-') {
+                if (tokens[0] === ')') {
+                    gramar.shift();
+
+                } else if (tokens[0] === '+') {
+                    gramar.shift();
                     gramar.unshift('E1');
                     gramar.unshift('T');
                     gramar.unshift(tokens[0]);
+
+                } else if (tokens[0] === '-') {
+                    gramar.shift();
+                    gramar.unshift('E1');
+                    gramar.unshift('T');
+                    gramar.unshift(tokens[0]);
+
+                    //fim de cadeia
+                } else if (tokens.length === 0) {
+                    gramar.shift();
+                } else {
+                    flag = 1;
                 }
 
             } else if (gramar[0] === 'T') {
-                gramar.shift();
-                gramar.unshift('T1');
-                gramar.unshift('P');
+                if (typeof tokens[0] === 'number') {
+                    gramar.shift();
+                    gramar.unshift('T1');
+                    gramar.unshift('P');
+
+                } else if (tokens[0] === '(') {
+                    gramar.shift();
+                    gramar.unshift('T1');
+                    gramar.unshift('P');
+
+                } else if (tokens[0] === 'exp') {
+                    gramar.shift();
+                    gramar.unshift('T1');
+                    gramar.unshift('P');
+
+                } else {
+                    flag = 1;
+                }
 
             } else if (gramar[0] === 'T1') {
-                gramar.shift();
+                if (tokens[0] === ')') {
+                    gramar.shift();
 
-                if (tokens[0] === '*' || tokens[0] === '/') {
+                } else if (tokens[0] === '*') {
+                    gramar.shift();
                     gramar.unshift('T1');
                     gramar.unshift('P');
                     gramar.unshift(tokens[0]);
+
+                } else if (tokens[0] === '/') {
+                    gramar.shift();
+                    gramar.unshift('T1');
+                    gramar.unshift('P');
+                    gramar.unshift(tokens[0]);
+
+                } else if (tokens[0] === '+') {
+                    gramar.shift();
+
+                } else if (tokens[0] === '-') {
+                    gramar.shift();
+
+                    //fim de cadeia
+                } else if (tokens.length === 0) {
+                    gramar.shift();
+                } else {
+                    flag = 1;
                 }
 
             } else if (gramar[0] === 'P') {
-                gramar.shift();
+                if (typeof tokens[0] === 'number') {
+                    gramar.shift();
+                    gramar.unshift('P1');
+                    gramar.unshift('F');
 
-                if (tokens[0] === 'exp' && tokens[1] === '[') {
+                } else if (tokens[0] === '(') {
+                    gramar.shift();
+                    gramar.unshift('P1');
+                    gramar.unshift('F');
+
+                } else if (tokens[0] === 'exp' && tokens[1] === '[') {
+                    gramar.shift(); //remove o exp
+                    gramar.shift(); //remove o '['
                     gramar.unshift('P1');
                     gramar.unshift(']');
                     gramar.unshift('F');
                     gramar.unshift('[');
                     gramar.unshift('exp');
-
                 } else {
-                    gramar.unshift('P1');
-                    gramar.unshift('F');
+                    flag = 1;
                 }
 
             } else if (gramar[0] === 'P1') {
-                gramar.shift();
-                if (tokens[0] === '^') {
+                if (tokens[0] === ')') {
+                    gramar.shift();
+
+                } else if (tokens[0] === ']') {
+                    gramar.shift();
+
+                } else if (tokens[0] === '*') {
+                    gramar.shift();
+
+                } else if (tokens[0] === '/') {
+                    gramar.shift();
+
+                } else if (tokens[0] === '+') {
+                    gramar.shift();
+
+                } else if (tokens[0] === '-') {
+                    gramar.shift();
+
+                } else if (tokens[0] === '^') {
+                    gramar.shift();
                     gramar.unshift('P1');
                     gramar.unshift('F');
                     gramar.unshift('^');
+
+                    //fim de cadeia
+                } else if (tokens.length === 0) {
+                    gramar.shift();
+
+                } else {
+                    flag = 1;
                 }
 
             } else if (gramar[0] === 'F') {
@@ -204,11 +302,11 @@ export class Analisador {
                     flag = 1;
                 }
 
+                //IF DOS NAO TERMINAIS PARA FAZER O CASAMENTO
             } else if (typeof gramar[0] === 'number') {
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
-
 
             } else if (gramar[0] === '(') {
                 casamento.push(tokens[0]);
@@ -219,16 +317,6 @@ export class Analisador {
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
-
-            } else if (gramar[0] === '+' || gramar[0] === '-') {
-                casamento.push(tokens[0]); //valida token
-                gramar.shift();
-                tokens.shift() //remove operador '+' ou '-'
-
-            } else if (gramar[0] === '*' || gramar[0] === '/') {
-                casamento.push(tokens[0]);
-                gramar.shift();
-                tokens.shift(); //remove operador '*' ou '/'
 
             } else if (gramar[0] === 'exp') {
                 casamento.push(tokens[0]);
@@ -245,15 +333,52 @@ export class Analisador {
                 gramar.shift();
                 tokens.shift();
 
+            } else if (gramar[0] === '*') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+            } else if (gramar[0] === '/') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+            } else if (gramar[0] === '+') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
+            } else if (gramar[0] === '-') {
+                casamento.push(tokens[0]);
+                gramar.shift();
+                tokens.shift();
+
             } else if (gramar[0] === '^') {
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
+            } else {
+                flag = 1;
             }
+
+            //console.log("grammar", gramar);
+            //console.log('casamento', casamento);
+            //console.log('tokens', tokens);
         }
 
         if (flag === 1) {
-            throw new Error(`${copiaToken.join('')} não é aceito`);
+            throw new Error(`${copyTokens.join('')} não é aceito`);
+        } else {
+            this.semantico(casamento);
         }
+
+    }
+
+    static semantico(casamento) {
+
+        var herdado = 0;
+        var sintetizado = 0;
+        console.log(casamento);
+
     }
 }
