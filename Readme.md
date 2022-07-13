@@ -19,32 +19,31 @@
 
 ### First da linguagem
 
-* FIRST E -> {exp, ( }
-* FIRST E' -> {+, -, e }
-* FIRST T -> {exp , ( }
-* FIRST T' -> {*, /, e}
-* FIRST P -> {exp, ( }
-* FIRST P' -> {^, e}
-* FIRST F -> { (, id}
+* FIRST E -> {exp, (, id}
+* FIRST E' -> {+ , - , e}
+* FIRST T -> {exp, ( , id}
+* FIRST T' -> {*, / , e} 
+* FIRST P -> {exp , ( , id}
+* FIRST P' -> {^ , e}
+* FIRST F -> { ( , id}
 
 ### Follow da linguagem
 
-* FOLLOW E = { ), $ }
-* FOLLOW E' = { ) ,$ }
-* FOLLOW T = {+, - , ) , $ }
-* FOLLOW T' = {+, - , ), $ }
-* FOLLOW P = { *, / , +, - , ), $ }
-* FOLLOW P' = {*, /, +, -, ), $ }
-* FOLLOW F = { ], ^, *, /, +, -, ), $ }
-
+* FOLLOW E = { ) , $}
+* FOLLOW E' = FOLLOW E  = { ) , $}
+* FOLLOW T = { + , - , ) , $}
+* FOLLOW T' = { + , - , ) , $}
+* FOLLOW P = { *, / , + , - , ) , $}
+* FOLLOW P' = {* , / , + , - , ) , $}
+* FOLLOW F = { ] , ^ , * , / , + , - , ) , $}
 
 # Tabela
 
 | NAO T. | id | ( | ) | exp | [ | ] | * | / | + | - | ^ | $ |
 | --- | --- | --- | ---- | --- | --- | --- | ---| ---| --- | --- | --- | --- |
-| **E** | | E -> TE'| | E -> TE'| | | | | | | | |
+| **E** | E -> TE' | E -> TE'| | E -> TE'| | | | | | | | |
 | **E'** | | | E'->&| | | | | | E' ->+TE'| E'-> -TE'| | E'->&|
-| **T** | | |T -> PT' | T -> PT'| | | | | | | | |
+| **T** | T -> PT' | |T -> PT' | T -> PT'| | | | | | | | |
 | **T'** | | | T' -> &| | | | T' -> *PT' | T' -> /PT'|T' -> &| T' -> &| |T' -> &|
 | **P** | P -> FP' |P -> FP' | |P -> exp[F]P' | | | | | | | | |
 | **P'** | | | | | | P' -> &|P' -> & |P' -> & |P' -> & |P' -> & | P' -> ^FP' | P' -> &|
