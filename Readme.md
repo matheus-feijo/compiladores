@@ -48,3 +48,7 @@
 | **P** | P -> FP' |P -> FP' | |P -> exp[F]P' | | | | | | | | |
 | **P'** | | |P' -> & | | | P' -> &|P' -> & |P' -> & |P' -> & |P' -> & | P' -> ^FP' | P' -> &|
 | **F** |  F -> id |F -> (E) | | | | | | || | | | |
+
+# Analisador Semântico
+
+## Análise sintatica descendente, logo , o tipo de analisador é *L-ATRIBUDAS*
