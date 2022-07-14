@@ -51,4 +51,23 @@
 
 # Analisador Semântico
 
-## Análise sintatica descendente, logo , o tipo de analisador é *L-ATRIBUDAS*
+#### Análise sintatica descendente, logo , o tipo de analisador é **L-ATRIBUDO**
+
+# Tabela
+
+| Produção  | REGRA SEMÂNTICA   |
+| ------- | -------- |
+| E -> TE'   | E -> T{E'.inh = T.val} E'{E.val = E'.syn}   |
+| E' -> + TE'   | E' -> +T{E'.inh = E'.inh + T.val} E'{E'.syn = E'.syn} |
+| E' -> -TE'|E' -> -T{E'.inh = E'.inh - T.val} E'{E'.syn = E'.syn}   |
+| E' -> &| E' -> &{E'.syn = E'.inh} |
+| T -> PT'| T -> P{T'.inh = P.val} T'{T.val = T'.syn} |
+| T' -> * PT' | T'-> * P{T'.inh = T'.inh ** P.val} T'{T'.syn = T'.syn} |
+| T' -> / PT' | T'-> / P{T'.inh = T'.inh / P.val} T'{T'.syn = T'.syn} |
+| T' -> &| T' -> &{T'.syn = T'.inh} |
+| P -> FP' | P -> F{P'.inh = F.val} P'{P.val = P'.syn}|
+| P -> exp[F]P'| P -> exp[F]{P'.inh = exp[F].val} P'{P.val = P'.syn}|
+| P' -> ^FP'| P' -> ^F{P'.inh = P'.inh ^ F.val} P'{P'.syn = P'.syn}|
+| P' -> &| P'-> &{P'.syn = P'.inh} |
+| F -> id| F -> id{F.val = id.lexVal} |
+| F -> (E) | F -> (E){F.val = (E).val}|
