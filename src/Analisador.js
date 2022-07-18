@@ -12,6 +12,17 @@ export class Analisador {
             var divisor = 1;
             var expoente;
             var flag = 0;
+            var str = '';
+
+            for (let j = 0; j < line.length; j++) {
+                if (line[j] === " " || line[j] === "\t" || line[j] === "\n") {
+                    continue;
+                } else {
+                    str = str + line[j];
+                }
+            }
+
+            line = str;
 
             for (let i = 0; i < line.length && flag === 0; i++) {
                 if (line[i] === " " || line[i] === "\t" || line[i] === "\n") {
@@ -125,51 +136,63 @@ export class Analisador {
             if (flag === 1) {
                 throw new Error(`'${line}' possui sintaxe incorreta para a linguagem`)
             } else {
-                console.log(tokens);
-                this.sintatic(tokens);
+                //console.log(tokens);
+                this.sintatic(tokens, line);
             }
         });
 
     }
 
-    static sintatic(tokens) {
+    static sintatic(tokens, line) {
 
         var copyTokens = tokens;
         var gramar = ['E'];
         var casamento = [];
+        var caminho = [];
         var flag = 0;
 
         while (gramar.length !== 0 && flag === 0) {
 
             if (gramar[0] === 'E') {
                 if (tokens[0] === '(') {
+                    caminho.push('E');
                     gramar.shift();
                     gramar.unshift('E1');
                     gramar.unshift('T');
 
                 } else if (tokens[0] === 'exp') {
+                    caminho.push('E');
                     gramar.shift();
                     gramar.unshift('E1');
                     gramar.unshift('T');
+
                 } else if (typeof tokens[0] === 'number') {
+                    caminho.push('E');
                     gramar.shift();
                     gramar.unshift('E1');
                     gramar.unshift('T');
+
                 } else {
                     flag = 1;
                 }
 
             } else if (gramar[0] === 'E1') {
                 if (tokens[0] === ')') {
+                    caminho.push('E1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === '+') {
+                    caminho.push('E1');
+
                     gramar.shift();
                     gramar.unshift('E1');
                     gramar.unshift('T');
                     gramar.unshift(tokens[0]);
 
                 } else if (tokens[0] === '-') {
+                    caminho.push('E1');
+
                     gramar.shift();
                     gramar.unshift('E1');
                     gramar.unshift('T');
@@ -177,6 +200,8 @@ export class Analisador {
 
                     //fim de cadeia
                 } else if (tokens.length === 0) {
+                    caminho.push('E1');
+
                     gramar.shift();
                 } else {
                     flag = 1;
@@ -184,16 +209,22 @@ export class Analisador {
 
             } else if (gramar[0] === 'T') {
                 if (typeof tokens[0] === 'number') {
+                    caminho.push('T');
+
                     gramar.shift();
                     gramar.unshift('T1');
                     gramar.unshift('P');
 
                 } else if (tokens[0] === '(') {
+                    caminho.push('T');
+
                     gramar.shift();
                     gramar.unshift('T1');
                     gramar.unshift('P');
 
                 } else if (tokens[0] === 'exp') {
+                    caminho.push('T');
+
                     gramar.shift();
                     gramar.unshift('T1');
                     gramar.unshift('P');
@@ -204,28 +235,40 @@ export class Analisador {
 
             } else if (gramar[0] === 'T1') {
                 if (tokens[0] === ')') {
+                    caminho.push('T1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === '*') {
+                    caminho.push('T1');
+
                     gramar.shift();
                     gramar.unshift('T1');
                     gramar.unshift('P');
                     gramar.unshift(tokens[0]);
 
                 } else if (tokens[0] === '/') {
+                    caminho.push('T1');
+
                     gramar.shift();
                     gramar.unshift('T1');
                     gramar.unshift('P');
                     gramar.unshift(tokens[0]);
 
                 } else if (tokens[0] === '+') {
+                    caminho.push('T1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === '-') {
+                    caminho.push('T1');
+
                     gramar.shift();
 
                     //fim de cadeia
                 } else if (tokens.length === 0) {
+                    caminho.push('T1');
+
                     gramar.shift();
                 } else {
                     flag = 1;
@@ -233,16 +276,22 @@ export class Analisador {
 
             } else if (gramar[0] === 'P') {
                 if (typeof tokens[0] === 'number') {
+                    caminho.push('P');
+
                     gramar.shift();
                     gramar.unshift('P1');
                     gramar.unshift('F');
 
                 } else if (tokens[0] === '(') {
+                    caminho.push('P');
+
                     gramar.shift();
                     gramar.unshift('P1');
                     gramar.unshift('F');
 
                 } else if (tokens[0] === 'exp' && tokens[1] === '[') {
+                    caminho.push('P');
+
                     gramar.shift(); //remove o exp
                     gramar.shift(); //remove o '['
                     gramar.unshift('P1');
@@ -256,24 +305,38 @@ export class Analisador {
 
             } else if (gramar[0] === 'P1') {
                 if (tokens[0] === ')') {
+                    caminho.push('P1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === ']') {
+                    caminho.push('P1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === '*') {
+                    caminho.push('P1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === '/') {
+                    caminho.push('P1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === '+') {
+                    caminho.push('P1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === '-') {
+                    caminho.push('P1');
+
                     gramar.shift();
 
                 } else if (tokens[0] === '^') {
+                    caminho.push('P1');
+
                     gramar.shift();
                     gramar.unshift('P1');
                     gramar.unshift('F');
@@ -290,10 +353,12 @@ export class Analisador {
             } else if (gramar[0] === 'F') {
 
                 if (typeof tokens[0] === 'number') {
+                    caminho.push('F');
                     gramar.shift();
                     gramar.unshift(tokens[0]);
 
                 } else if (tokens[0] === '(') {
+                    caminho.push('F');
                     gramar.shift();
                     gramar.unshift(')');
                     gramar.unshift('E');
@@ -304,81 +369,278 @@ export class Analisador {
 
                 //IF DOS NAO TERMINAIS PARA FAZER O CASAMENTO
             } else if (typeof gramar[0] === 'number') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === '(') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === ')') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === 'exp') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === '[') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === ']') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === '*') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === '/') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === '+') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === '-') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
 
             } else if (gramar[0] === '^') {
+                caminho.push(tokens[0]);
                 casamento.push(tokens[0]);
                 gramar.shift();
                 tokens.shift();
             } else {
                 flag = 1;
             }
-
-            //console.log("grammar", gramar);
-            //console.log('casamento', casamento);
-            //console.log('tokens', tokens);
         }
 
         if (flag === 1) {
-            throw new Error(`${copyTokens.join('')} não é aceito`);
+            throw new Error(`ERRO SINTATICO`);
         } else {
-            this.semantico(casamento);
+            this.semantico(casamento, line);
         }
 
     }
 
-    static semantico(casamento) {
+    static semantico(casamento, line) {
 
-        var herdado = 0;
-        var sintetizado = 0;
-        console.log(casamento);
+        var res = 0;
+        //console.log(eval(res));
+        var hasParenteses = false;
+        var startParenteses = 0;
 
+        var num = [];
+
+        for (let i = 0; casamento.length > i; i++) {
+            if (casamento[i] === ')') {
+                hasParenteses = false;
+
+                for (let j = 0; j < num.length; j++) {
+                    //console.log(num[j]);
+                    if (num.includes('exp')) {
+                        for (let k = 0; k < num.length; k++) {
+                            if (num[k] === 'exp') {
+                                //tokens = ['exp','[','numero' ,']']
+                                res = Math.exp(num[k + 2]);
+                                num.splice(k, 5);
+                                num.splice(k, 0, res);
+                                j = 0;
+                                //console.log('exp exp exp ', num);
+
+                            }
+                        }
+                    }
+
+                    if (num.includes('^')) {
+
+                        for (let k = 0; k < num.length; k++) {
+                            if (num[k] === '^') {
+                                res = num[k - 1] ** num[k + 1]
+                                //console.log(res);
+                                num.splice(k - 1, 3);
+                                num.splice(k - 1, 0, res);
+                                j = 0;
+                                //console.log("^^^", num);
+                            }
+                        }
+
+                    } else if (!num.includes('^') && num.includes('/')) {
+                        for (let k = 0; k < num.length; k++) {
+                            if (num[k] === '/') {
+                                res = num[k - 1] / num[k + 1]
+                                //console.log(res);
+                                num.splice(k - 1, 3);
+                                num.splice(k - 1, 0, res);
+                                j = 0;
+                                //console.log("/ / /", num);
+                            }
+                        }
+
+                    } else if (!num.includes('^') && !num.includes('/') && num.includes('*')) {
+                        for (let k = 0; k < num.length; k++) {
+                            if (num[k] === '*') {
+                                res = num[k - 1] * num[k + 1]
+                                //console.log(res);
+                                num.splice(k - 1, 3);
+                                num.splice(k - 1, 0, res);
+                                j = 0;
+                                //console.log("***", num);
+                            }
+                        }
+
+
+                    } else if (!num.includes('^') && !num.includes('/') && !num.includes('*') && num.includes('-')) {
+                        for (let k = 0; k < num.length; k++) {
+                            if (num[k] === '-') {
+                                res = num[k - 1] - num[k + 1]
+                                //console.log(res);
+                                num.splice(k - 1, 3);
+                                num.splice(k - 1, 0, res);
+                                j = 0;
+                                //console.log("- - -", num);
+                            }
+                        }
+
+                    } else if (!num.includes('^') && !num.includes('/') && !num.includes('*') && !num.includes('-') && num.includes('+')) {
+
+                        for (let k = 0; k < num.length; k++) {
+                            if (num[k] === '+') {
+                                res = num[k - 1] + num[k + 1]
+                                //console.log(res);
+                                num.splice(k - 1, 3);
+                                num.splice(k - 1, 0, res);
+                                j = 0;
+                                //console.log("+++", num);
+
+                            }
+                        }
+                    }
+                }
+                casamento.splice(startParenteses, i - startParenteses + 1);
+                casamento.splice(startParenteses, 0, num[0]);
+                num.pop();
+                i = 0;
+            }
+            if (hasParenteses) {
+                num.push(casamento[i]);
+            }
+            if (casamento[i] === '(') {
+                hasParenteses = true;
+                startParenteses = i;
+            }
+        }
+
+        //console.log(casamento);
+
+        for (let j = 0; j < casamento.length; j++) {
+            //console.log(casamento[j]);
+            if (casamento.includes('exp')) {
+                for (let k = 0; k < casamento.length; k++) {
+                    if (casamento[k] === 'exp') {
+                        //tokens = ['exp','[','casamentoero' ,']']
+                        res = Math.exp(casamento[k + 2]);
+                        casamento.splice(k, 5);
+                        casamento.splice(k, 0, res);
+                        j = 0;
+                        //console.log('exp exp exp ', casamento);
+
+                    }
+                }
+            }
+
+            if (casamento.includes('^')) {
+
+                for (let k = 0; k < casamento.length; k++) {
+                    if (casamento[k] === '^') {
+                        res = casamento[k - 1] ** casamento[k + 1]
+                        //console.log(res);
+                        casamento.splice(k - 1, 3);
+                        casamento.splice(k - 1, 0, res);
+                        j = 0;
+                        //console.log("^^^", casamento);
+                    }
+                }
+
+
+            } else if (!casamento.includes('^') && casamento.includes('/')) {
+                for (let k = 0; k < casamento.length; k++) {
+                    if (casamento[k] === '/') {
+                        res = casamento[k - 1] / casamento[k + 1]
+                        //console.log(res);
+                        casamento.splice(k - 1, 3);
+                        casamento.splice(k - 1, 0, res);
+                        j = 0;
+                        //console.log("/ / /", casamento);
+                    }
+                }
+
+            } else if (!casamento.includes('^') && !casamento.includes('/') && casamento.includes('*')) {
+                for (let k = 0; k < casamento.length; k++) {
+                    if (casamento[k] === '*') {
+                        res = casamento[k - 1] * casamento[k + 1]
+                        //console.log(res);
+                        casamento.splice(k - 1, 3);
+                        casamento.splice(k - 1, 0, res);
+                        j = 0;
+                        //console.log("***", casamento);
+                    }
+                }
+
+
+            } else if (!casamento.includes('^') && !casamento.includes('/') && !casamento.includes('*') && casamento.includes('-')) {
+                for (let k = 0; k < casamento.length; k++) {
+                    if (casamento[k] === '-') {
+                        res = casamento[k - 1] - casamento[k + 1]
+                        //console.log(res);
+                        casamento.splice(k - 1, 3);
+                        casamento.splice(k - 1, 0, res);
+                        j = 0;
+                        //console.log("- - -", casamento);
+                    }
+                }
+
+            } else if (!casamento.includes('^') && !casamento.includes('/') && !casamento.includes('*') && !casamento.includes('-') && casamento.includes('+')) {
+
+                for (let k = 0; k < casamento.length; k++) {
+                    if (casamento[k] === '+') {
+                        res = casamento[k - 1] + casamento[k + 1]
+                        //console.log(res);
+                        casamento.splice(k - 1, 3);
+                        casamento.splice(k - 1, 0, res);
+                        j = 0;
+                        //console.log("+++", casamento);
+
+                    }
+                }
+            }
+        }
+
+        console.log(" - - - - - - - - - -");
+        console.log(`${line} === ${casamento[0]}`);
+        //console.log(casamento);
     }
 }
