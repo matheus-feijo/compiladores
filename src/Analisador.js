@@ -449,97 +449,92 @@ export class Analisador {
     static semantico(casamento, line) {
 
         var res = 0;
-        //console.log(eval(res));
         var hasParenteses = false;
         var startParenteses = 0;
 
         var num = [];
 
+        const resultadoConta = (num) => {
+            for (let j = 0; j < num.length; j++) {
+                //console.log(num[j]);
+                if (num.includes('exp')) {
+                    for (let k = 0; k < num.length; k++) {
+                        if (num[k] === 'exp') {
+                            //tokens = ['exp','[','numero' ,']']
+                            res = Math.exp(num[k + 2]);
+                            num.splice(k, 5);
+                            num.splice(k, 0, res);
+                            j = 0;
+                        }
+                    }
+                }
+
+                if (num.includes('^')) {
+
+                    for (let k = 0; k < num.length; k++) {
+                        if (num[k] === '^') {
+                            res = num[k - 1] ** num[k + 1]
+                            num.splice(k - 1, 3);
+                            num.splice(k - 1, 0, res);
+                            j = 0;
+                            //console.log("^^^", num);
+                        }
+                    }
+
+                } else if (!num.includes('^') && num.includes('/')) {
+                    for (let k = 0; k < num.length; k++) {
+                        if (num[k] === '/') {
+                            res = num[k - 1] / num[k + 1]
+                            num.splice(k - 1, 3);
+                            num.splice(k - 1, 0, res);
+                            j = 0;
+                            //console.log("/ / /", num);
+                        }
+                    }
+
+                } else if (!num.includes('^') && !num.includes('/') && num.includes('*')) {
+                    for (let k = 0; k < num.length; k++) {
+                        if (num[k] === '*') {
+                            res = num[k - 1] * num[k + 1]
+                            num.splice(k - 1, 3);
+                            num.splice(k - 1, 0, res);
+                            j = 0;
+                            //console.log("***", num);
+                        }
+                    }
+
+
+                } else if (!num.includes('^') && !num.includes('/') && !num.includes('*') && num.includes('-')) {
+                    for (let k = 0; k < num.length; k++) {
+                        if (num[k] === '-') {
+                            res = num[k - 1] - num[k + 1]
+                            num.splice(k - 1, 3);
+                            num.splice(k - 1, 0, res);
+                            j = 0;
+                            //console.log("- - -", num);
+                        }
+                    }
+
+                } else if (!num.includes('^') && !num.includes('/') && !num.includes('*') && !num.includes('-') && num.includes('+')) {
+
+                    for (let k = 0; k < num.length; k++) {
+                        if (num[k] === '+') {
+                            res = num[k - 1] + num[k + 1]
+                            num.splice(k - 1, 3);
+                            num.splice(k - 1, 0, res);
+                            j = 0;
+                            //console.log("+++", num);
+                        }
+                    }
+                }
+            }
+        }
+
         for (let i = 0; casamento.length > i; i++) {
             if (casamento[i] === ')') {
                 hasParenteses = false;
 
-                for (let j = 0; j < num.length; j++) {
-                    //console.log(num[j]);
-                    if (num.includes('exp')) {
-                        for (let k = 0; k < num.length; k++) {
-                            if (num[k] === 'exp') {
-                                //tokens = ['exp','[','numero' ,']']
-                                res = Math.exp(num[k + 2]);
-                                num.splice(k, 5);
-                                num.splice(k, 0, res);
-                                j = 0;
-                                //console.log('exp exp exp ', num);
-
-                            }
-                        }
-                    }
-
-                    if (num.includes('^')) {
-
-                        for (let k = 0; k < num.length; k++) {
-                            if (num[k] === '^') {
-                                res = num[k - 1] ** num[k + 1]
-                                //console.log(res);
-                                num.splice(k - 1, 3);
-                                num.splice(k - 1, 0, res);
-                                j = 0;
-                                //console.log("^^^", num);
-                            }
-                        }
-
-                    } else if (!num.includes('^') && num.includes('/')) {
-                        for (let k = 0; k < num.length; k++) {
-                            if (num[k] === '/') {
-                                res = num[k - 1] / num[k + 1]
-                                //console.log(res);
-                                num.splice(k - 1, 3);
-                                num.splice(k - 1, 0, res);
-                                j = 0;
-                                //console.log("/ / /", num);
-                            }
-                        }
-
-                    } else if (!num.includes('^') && !num.includes('/') && num.includes('*')) {
-                        for (let k = 0; k < num.length; k++) {
-                            if (num[k] === '*') {
-                                res = num[k - 1] * num[k + 1]
-                                //console.log(res);
-                                num.splice(k - 1, 3);
-                                num.splice(k - 1, 0, res);
-                                j = 0;
-                                //console.log("***", num);
-                            }
-                        }
-
-
-                    } else if (!num.includes('^') && !num.includes('/') && !num.includes('*') && num.includes('-')) {
-                        for (let k = 0; k < num.length; k++) {
-                            if (num[k] === '-') {
-                                res = num[k - 1] - num[k + 1]
-                                //console.log(res);
-                                num.splice(k - 1, 3);
-                                num.splice(k - 1, 0, res);
-                                j = 0;
-                                //console.log("- - -", num);
-                            }
-                        }
-
-                    } else if (!num.includes('^') && !num.includes('/') && !num.includes('*') && !num.includes('-') && num.includes('+')) {
-
-                        for (let k = 0; k < num.length; k++) {
-                            if (num[k] === '+') {
-                                res = num[k - 1] + num[k + 1]
-                                //console.log(res);
-                                num.splice(k - 1, 3);
-                                num.splice(k - 1, 0, res);
-                                j = 0;
-                                //console.log("+++", num);
-
-                            }
-                        }
-                    }
-                }
+                resultadoConta(num);
                 casamento.splice(startParenteses, i - startParenteses + 1);
                 casamento.splice(startParenteses, 0, num[0]);
                 num.pop();
@@ -553,92 +548,7 @@ export class Analisador {
                 startParenteses = i;
             }
         }
-
-        //console.log(casamento);
-
-        for (let j = 0; j < casamento.length; j++) {
-            //console.log(casamento[j]);
-            if (casamento.includes('exp')) {
-                for (let k = 0; k < casamento.length; k++) {
-                    if (casamento[k] === 'exp') {
-                        //tokens = ['exp','[','casamentoero' ,']']
-                        res = Math.exp(casamento[k + 2]);
-                        casamento.splice(k, 5);
-                        casamento.splice(k, 0, res);
-                        j = 0;
-                        //console.log('exp exp exp ', casamento);
-
-                    }
-                }
-            }
-
-            if (casamento.includes('^')) {
-
-                for (let k = 0; k < casamento.length; k++) {
-                    if (casamento[k] === '^') {
-                        res = casamento[k - 1] ** casamento[k + 1]
-                        //console.log(res);
-                        casamento.splice(k - 1, 3);
-                        casamento.splice(k - 1, 0, res);
-                        j = 0;
-                        //console.log("^^^", casamento);
-                    }
-                }
-
-
-            } else if (!casamento.includes('^') && casamento.includes('/')) {
-                for (let k = 0; k < casamento.length; k++) {
-                    if (casamento[k] === '/') {
-                        res = casamento[k - 1] / casamento[k + 1]
-                        //console.log(res);
-                        casamento.splice(k - 1, 3);
-                        casamento.splice(k - 1, 0, res);
-                        j = 0;
-                        //console.log("/ / /", casamento);
-                    }
-                }
-
-            } else if (!casamento.includes('^') && !casamento.includes('/') && casamento.includes('*')) {
-                for (let k = 0; k < casamento.length; k++) {
-                    if (casamento[k] === '*') {
-                        res = casamento[k - 1] * casamento[k + 1]
-                        //console.log(res);
-                        casamento.splice(k - 1, 3);
-                        casamento.splice(k - 1, 0, res);
-                        j = 0;
-                        //console.log("***", casamento);
-                    }
-                }
-
-
-            } else if (!casamento.includes('^') && !casamento.includes('/') && !casamento.includes('*') && casamento.includes('-')) {
-                for (let k = 0; k < casamento.length; k++) {
-                    if (casamento[k] === '-') {
-                        res = casamento[k - 1] - casamento[k + 1]
-                        //console.log(res);
-                        casamento.splice(k - 1, 3);
-                        casamento.splice(k - 1, 0, res);
-                        j = 0;
-                        //console.log("- - -", casamento);
-                    }
-                }
-
-            } else if (!casamento.includes('^') && !casamento.includes('/') && !casamento.includes('*') && !casamento.includes('-') && casamento.includes('+')) {
-
-                for (let k = 0; k < casamento.length; k++) {
-                    if (casamento[k] === '+') {
-                        res = casamento[k - 1] + casamento[k + 1]
-                        //console.log(res);
-                        casamento.splice(k - 1, 3);
-                        casamento.splice(k - 1, 0, res);
-                        j = 0;
-                        //console.log("+++", casamento);
-
-                    }
-                }
-            }
-        }
-
+        resultadoConta(casamento);
         console.log(" - - - - - - - - - -");
         console.log(`${line} === ${casamento[0]}`);
         //console.log(casamento);
