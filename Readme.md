@@ -1,4 +1,5 @@
-
+### para leitura do arquivo de forma facilitada foi utilizado o line reader para facilitar a leitura de arquivos txt na linguagem escolhida
+# é preciso realizar um NPM INSTALL no diretorio do projeto para assim roda-lo corretamente
 # automatos
 ###### exemplo de automatos seguido para a construção do analisador léxico, vale resaltar que algumas conexões foram mudadas
 
