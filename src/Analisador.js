@@ -5,7 +5,7 @@ const operators = ['+', '-', '*', '/', '^', '(', ')', '[', ']'];
 
 export class Analisador {
     static lexico(url) {
-        eachLine(url, (line, last) => {
+        eachLine(url, (line) => {
             const tokens = [];
             var num = 0;
             var stage = 0;
@@ -549,7 +549,6 @@ export class Analisador {
             }
         }
         resultadoConta(casamento);
-        console.log(" - - - - - - - - - -");
         console.log(`${line} === ${casamento[0]}`);
         //console.log(casamento);
     }
